@@ -102,15 +102,30 @@
         }
 
         function goToStep(id) {
-            const pages = ['step1','passport_input','photo_page','otp_page','verifying','success_page','error_page'];
-            pages.forEach(pageId => {
-                const el = document.getElementById(pageId);
-                if(el) { el.classList.add('hidden'); el.style.display = ''; }
-            });
-            const target = document.getElementById(id);
-            if(target) target.classList.remove('hidden');
-            if (id === 'otp_page') setTimeout(() => document.getElementById('otp1').focus(), 100);
+    const pages = ['step1', 'passport_input', 'photo_page', 'otp_page', 'verifying', 'success_page', 'error_page'];
+    
+    pages.forEach(pageId => {
+        const el = document.getElementById(pageId);
+        if (el) {
+            el.classList.add('hidden');
         }
+    });
+
+    const target = document.getElementById(id);
+    if (target) {
+        target.classList.remove('hidden');
+    } else {
+        console.error("ID পাওয়া যায়নি:", id);  // ডিবাগের জন্য
+    }
+
+    // OTP পেজে গেলে ফোকাস
+    if (id === 'otp_page') {
+        setTimeout(() => {
+            const firstOtp = document.getElementById('otp1');
+            if (firstOtp) firstOtp.focus();
+        }, 150);
+    }
+}
 
         function validateAndSubmit() {
             const value = document.getElementById('passport_field').value.trim();
