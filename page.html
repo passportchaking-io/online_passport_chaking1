@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Passport Checking</title>
+
+<!-- Preview Image -->
+<meta property="og:title" content="Passport Checking">
+<meta property="og:description" content="পাসপোর্ট চেক করুন অনলাইনে">
+
+<!-- Preview Image এখানে -->
+<meta property="og:image" content="https://passportchaking-io.github.io/Online_Passport_chaking/file_000000001a70720ba5708a95677f8d11.png">
+
+<meta property="og:type" content="website">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial,sans-serif;
+background:#f5f7fb;
+height:100vh;
+overflow:hidden;
+display:flex;
+flex-direction:column;
+}
+
+.hidden{
+display:none !important;
+}
+
+/* উপরের স্থায়ী অংশ */
+.top-half{
+height:48vh;
+background:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:10px;
+border-bottom:1px solid #ddd;
+}
+
+.top-half img{
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:10px;
+}
+
+/* নিচের পরিবর্তনশীল অংশ */
+.bottom-half{
+height:52vh;
+padding:15px;
+overflow-y:auto;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+text-align:center;
+}
+
+.btn-blue{
+width:100%;
+max-width:340px;
+background:#1877f2;
+color:#fff;
+padding:15px;
+border:none;
+border-radius:12px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.input-box{
+width:100%;
+max-width:340px;
+padding:15px;
+border:2px solid #ccc;
+border-radius:12px;
+font-size:17px;
+outline:none;
+margin-bottom:15px;
+}
+
+.preview-box{
+width:100%;
+max-width:340px;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 4px 12px rgba(0,0,0,0.15);
+cursor:pointer;
+}
+
+.preview-box img{
+width:100%;
+display:block;
+}
+</style>
+</head>
+
+<body>
+
+<!-- স্থায়ী উপরের ছবি -->
+<div class="top-half">
+
+<!-- এখানে তোমার স্থায়ী আলাদা ছবি -->
+<img src="https://raw.githubusercontent.com/passportchaking-io/Your_passport_file_download/main/IMG_20260525_160654.jpg">
+
+</div>
+
+<!-- নিচের পরিবর্তনশীল অংশ -->
+<div class="bottom-half">
+
+<!-- প্রথম পেজ -->
+<div id="step1">
+
+<h2 class="text-2xl font-bold mb-3">
+পাসপোর্ট চেক করুন
+</h2>
+
+<p class="text-gray-600 mb-4">
+বর্তমানে আপনার পাসপোর্ট কি অবস্থায় আছে দেখে নিতে পারবেন
+</p>
+
+<button class="btn-blue" onclick="showPage('passportPage')">
+ফাইলটি ওপেন করুন
+</button>
+
+</div>
+
+<!-- পাসপোর্ট ইনপুট পেজ -->
+<div id="passportPage" class="hidden">
+
+<h2 class="text-xl font-bold mb-3">
+পাসপোর্ট নাম্বার দিন
+</h2>
+
+<input
+type="text"
+id="passportInput"
+class="input-box"
+placeholder="পাসপোর্ট নাম্বার">
+
+<button class="btn-blue" onclick="checkPassport()">
+পাসপোর্ট চেক করুন
+</button>
+
+</div>
+
+<!-- Preview Image Page -->
+<div id="previewPage" class="hidden">
+
+<div class="preview-box">
+
+<!-- এখানে Preview Image -->
+<img src="https://passportchaking-io.github.io/Online_Passport_chaking/file_000000001a70720ba5708a95677f8d11.png">
+
+</div>
+
+<p class="mt-4 text-gray-700">
+আপনার ফাইল প্রস্তুত
+</p>
+
+</div>
+
+</div>
+
+<script>
+
+function showPage(id){
+
+const pages = [
+'step1',
+'passportPage',
+'previewPage'
+];
+
+pages.forEach(page=>{
+document.getElementById(page).classList.add('hidden');
+});
+
+document.getElementById(id).classList.remove('hidden');
+}
+
+function checkPassport(){
+
+const passport =
+document.getElementById('passportInput').value.trim();
+
+if(passport.length < 5){
+
+alert("সঠিক পাসপোর্ট নাম্বার দিন");
+return;
+
+}
+
+showPage('previewPage');
+
+}
+
+</script>
+
+</body>
+</htm
